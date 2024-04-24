@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../product_detail/product_detail_screen.dart';
+
 class ProductListScreen extends StatelessWidget {
   const ProductListScreen({super.key});
 
@@ -9,6 +11,8 @@ class ProductListScreen extends StatelessWidget {
       backgroundColor: Colors.grey[200],
       appBar: AppBar(
         backgroundColor: Colors.grey[200],
+        scrolledUnderElevation: 0,
+        toolbarHeight: 80,
         title: Row(
           children: [
             Image.asset(
@@ -142,38 +146,56 @@ class ProductListScreen extends StatelessWidget {
                 childAspectRatio: 0.7,
               ),
               itemBuilder: (context, index) {
-                return Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.grey[200],
-                            borderRadius: BorderRadius.circular(10),
+                return InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return const ProductDetailScreen();
+                        },
+                      ),
+                    );
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.grey[200],
+                              borderRadius: BorderRadius.circular(10),
+                              image: const DecorationImage(
+                                image: NetworkImage(
+                                  'https://cdn.dummyjson.com/product-images/4/thumbnail.jpg',
+                                ),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 10),
-                      const Text(
-                        'Product Name',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
+                        const SizedBox(height: 10),
+                        const Text(
+                          'Product Name',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 5),
-                      Text(
-                        'Rp 100.000',
-                        style: TextStyle(
-                          color: Colors.yellow[700],
+                        const SizedBox(height: 5),
+                        Text(
+                          'Rp 100.000',
+                          style: TextStyle(
+                            color: Colors.yellow[700],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 );
               },
