@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'presentation/product_list/product_list_screen.dart';
+
 void main() {
   runApp(const MainApp());
 }
@@ -9,15 +11,18 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Hello World'),
-        ),
-        body: const Center(
-          child: Text('Hello World'),
-        ),
+    return GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      onTap: () {
+        final FocusScopeNode currentFocus = FocusScope.of(context);
+        if (!currentFocus.hasPrimaryFocus &&
+            currentFocus.focusedChild != null) {
+          FocusManager.instance.primaryFocus!.unfocus();
+        }
+      },
+      child: const MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: ProductListScreen(),
       ),
     );
   }
