@@ -20,7 +20,7 @@ class ProductDetailScreen extends StatelessWidget {
                   width: 40,
                   height: 40,
                   child: Material(
-                    color: Colors.white,
+                    color: Colors.white.withOpacity(0.8),
                     shape: const CircleBorder(),
                     child: IconButton(
                       icon: const Icon(
@@ -35,6 +35,23 @@ class ProductDetailScreen extends StatelessWidget {
                 ),
               ],
             ),
+            actions: [
+              SizedBox(
+                width: 40,
+                height: 40,
+                child: Material(
+                  color: Colors.white.withOpacity(0.8),
+                  shape: const CircleBorder(),
+                  child: IconButton(
+                    icon: const Icon(
+                      Icons.edit_rounded,
+                      color: Colors.black,
+                    ),
+                    onPressed: () {},
+                  ),
+                ),
+              ),
+            ],
             flexibleSpace: Stack(
               children: [
                 FlexibleSpaceBar(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../product_detail/product_detail_screen.dart';
+import '../product_search/product_search_screen.dart';
 
 class ProductListScreen extends StatelessWidget {
   const ProductListScreen({super.key});
@@ -81,7 +82,16 @@ class ProductListScreen extends StatelessWidget {
             sliver: SliverToBoxAdapter(
               child: TextField(
                 readOnly: true,
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return const ProductSearchScreen();
+                      },
+                    ),
+                  );
+                },
                 decoration: InputDecoration(
                   hintText: 'Search product',
                   prefixIcon: const Icon(Icons.search_rounded),
@@ -136,7 +146,12 @@ class ProductListScreen extends StatelessWidget {
             ),
           ),
           SliverPadding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.only(
+              left: 16.0,
+              right: 16.0,
+              top: 16.0,
+              bottom: 100.0,
+            ),
             sliver: SliverGrid.builder(
               itemCount: 10,
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -202,6 +217,10 @@ class ProductListScreen extends StatelessWidget {
             ),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: const Icon(Icons.add_rounded),
       ),
       bottomNavigationBar: Container(
         color: Colors.grey[200],
