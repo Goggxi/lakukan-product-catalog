@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 
+import 'di/di.dart';
 import 'presentation/product_list/product_list_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Future.wait([configureDependencies()]);
   runApp(const MainApp());
 }
 

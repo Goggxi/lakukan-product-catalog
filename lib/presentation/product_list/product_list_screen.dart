@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:lakukan_product_catalog/di/di.dart';
+import 'package:lakukan_product_catalog/domain/repositories/product_repository.dart';
 
+import '../product_add/product_add_screen.dart';
 import '../product_detail/product_detail_screen.dart';
 import '../product_search/product_search_screen.dart';
 
@@ -45,7 +48,10 @@ class ProductListScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.logout_rounded),
-            onPressed: () {},
+            onPressed: () {
+              final tes = getIt<ProductRepository>();
+              tes.getProducts(limit: 10);
+            },
           ),
         ],
       ),
@@ -219,7 +225,16 @@ class ProductListScreen extends StatelessWidget {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) {
+                return const ProductAddScreen();
+              },
+            ),
+          );
+        },
         child: const Icon(Icons.add_rounded),
       ),
       bottomNavigationBar: Container(

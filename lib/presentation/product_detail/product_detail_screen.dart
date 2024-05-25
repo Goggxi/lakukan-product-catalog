@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../product_update/product_update_screen.dart';
+
 class ProductDetailScreen extends StatelessWidget {
   const ProductDetailScreen({super.key});
 
@@ -47,7 +49,16 @@ class ProductDetailScreen extends StatelessWidget {
                       Icons.edit_rounded,
                       color: Colors.black,
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return const ProductUpdateScreen();
+                          },
+                        ),
+                      );
+                    },
                   ),
                 ),
               ),
