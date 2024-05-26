@@ -4,12 +4,13 @@ import 'package:lakukan_product_catalog/utils/result.dart';
 
 abstract class ProductRepository {
   Future<Result<PagingEntity<ProductEntity>>> getProducts({
-    required final int limit,
+    required int limit,
+    required int skip,
   });
   Future<Result<ProductEntity>> getProductById({
-    required final String id,
+    required String id,
   });
   Future<Result<ProductEntity>> searchProduct({
-    required final String query,
+    required String query,
   });
 }

@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:injectable/injectable.dart';
-import 'package:lakukan_product_catalog/data/models/product_entity.dart';
+import 'package:lakukan_product_catalog/data/models/product_model.dart';
 import 'package:lakukan_product_catalog/domain/entites/paging_entity.dart';
 import 'package:lakukan_product_catalog/domain/entites/product_entity.dart';
 import 'package:lakukan_product_catalog/domain/repositories/product_repository.dart';
@@ -26,10 +26,12 @@ class ProductRepositoryImpl extends ProductRepository {
   @override
   Future<Result<PagingEntity<ProductEntity>>> getProducts({
     required int limit,
+    required int skip,
   }) async {
     const path = '/products';
     final Map<String, dynamic> queryParameters = {
       'limit': limit,
+      'skip': skip,
     };
 
     try {
@@ -50,7 +52,7 @@ class ProductRepositoryImpl extends ProductRepository {
         final List<ProductModel> products = (decode['products'] as List)
             .map((e) => ProductModel.fromJson(e))
             .toList();
-        _logger.d("Success : ${response.body.toString()}");
+        _logger.d("Success : ${response.statusCode}");
         return Result.success(
           PagingEntity<ProductEntity>(
             list: products,

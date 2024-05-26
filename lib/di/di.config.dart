@@ -13,9 +13,11 @@ import 'package:http/http.dart' as _i3;
 import 'package:injectable/injectable.dart' as _i2;
 import 'package:lakukan_product_catalog/data/repositories/product_repository_impl.dart'
     as _i7;
-import 'package:lakukan_product_catalog/di/modules.dart' as _i8;
+import 'package:lakukan_product_catalog/di/modules.dart' as _i9;
 import 'package:lakukan_product_catalog/domain/repositories/product_repository.dart'
     as _i6;
+import 'package:lakukan_product_catalog/presentation/product_list/product_list_bloc.dart'
+    as _i8;
 import 'package:lakukan_product_catalog/utils/http_client.dart' as _i5;
 import 'package:logger/logger.dart' as _i4;
 
@@ -38,8 +40,10 @@ extension GetItInjectableX on _i1.GetIt {
           gh<_i5.HttpClient>(),
           gh<_i4.Logger>(),
         ));
+    gh.factory<_i8.ProductListBloc>(
+        () => _i8.ProductListBloc(gh<_i6.ProductRepository>()));
     return this;
   }
 }
 
-class _$RegisterModule extends _i8.RegisterModule {}
+class _$RegisterModule extends _i9.RegisterModule {}

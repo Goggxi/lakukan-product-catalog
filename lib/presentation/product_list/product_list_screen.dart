@@ -1,13 +1,62 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lakukan_product_catalog/di/di.dart';
-import 'package:lakukan_product_catalog/domain/repositories/product_repository.dart';
+import 'package:lakukan_product_catalog/presentation/product_list/product_list_bloc.dart';
 
+import '../../domain/entites/product_entity.dart';
 import '../product_add/product_add_screen.dart';
 import '../product_detail/product_detail_screen.dart';
 import '../product_search/product_search_screen.dart';
 
-class ProductListScreen extends StatelessWidget {
+class ProductListScreen extends StatefulWidget {
   const ProductListScreen({super.key});
+
+  @override
+  State<ProductListScreen> createState() => _ProductListScreenState();
+}
+
+class _ProductListScreenState extends State<ProductListScreen> {
+  late final ProductListBloc _productListBloc;
+  late final ScrollController _scrollController;
+  late final List<ProductEntity> _productList;
+  late int _skip;
+  late bool _hasMoreData;
+  late bool _fristLoad;
+
+  void _reset() {
+    setState(() {
+      _productList = [];
+      _skip = 0;
+      _hasMoreData = true;
+      _fristLoad = true;
+    });
+  }
+
+  void _onscroll() {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
+      if (_hasMoreData) {
+        _productListBloc.add(GetProductListEvent(limit: 10, skip: _skip));
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    _productListBloc = getIt<ProductListBloc>();
+    _scrollController = ScrollController();
+    _reset();
+    _productListBloc.add(GetProductListEvent(limit: 10, skip: _skip));
+    _scrollController.addListener(() => _onscroll());
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _productListBloc.close();
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,14 +97,12 @@ class ProductListScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.logout_rounded),
-            onPressed: () {
-              final tes = getIt<ProductRepository>();
-              tes.getProducts(limit: 10);
-            },
+            onPressed: () {},
           ),
         ],
       ),
       body: CustomScrollView(
+        controller: _scrollController,
         slivers: [
           SliverPadding(
             padding: const EdgeInsets.all(16),
@@ -151,76 +198,146 @@ class ProductListScreen extends StatelessWidget {
               ),
             ),
           ),
-          SliverPadding(
-            padding: const EdgeInsets.only(
-              left: 16.0,
-              right: 16.0,
-              top: 16.0,
-              bottom: 100.0,
-            ),
-            sliver: SliverGrid.builder(
-              itemCount: 10,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
-                childAspectRatio: 0.7,
-              ),
-              itemBuilder: (context, index) {
-                return InkWell(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) {
-                          return const ProductDetailScreen();
-                        },
+          BlocConsumer<ProductListBloc, ProductListState>(
+            bloc: _productListBloc,
+            listener: (context, state) {
+              if (state is ProductListError) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(state.message),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+
+                if (_fristLoad) {
+                  setState(() => _fristLoad = false);
+                }
+
+                if (_hasMoreData) {
+                  setState(() => _hasMoreData = false);
+                }
+                return;
+              }
+
+              if (state is ProductListSuccess) {
+                final result = state.result;
+                final data = result.data;
+
+                if (data.list.isNotEmpty) {
+                  setState(() {
+                    _productList.addAll(data.list);
+                    _skip += 10;
+                  });
+                }
+
+                if (data.list.length < 10) {
+                  setState(() => _hasMoreData = false);
+                }
+
+                if (_fristLoad) {
+                  setState(() => _fristLoad = false);
+                }
+                return;
+              }
+
+              if (state is ProductListError) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(state.message),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+
+                if (_fristLoad) {
+                  setState(() => _fristLoad = false);
+                }
+
+                if (_hasMoreData) {
+                  setState(() => _hasMoreData = false);
+                }
+                return;
+              }
+            },
+            builder: (context, state) {
+              if (state is ProductListLoading && _fristLoad) {
+                return const SliverFillRemaining(
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                );
+              }
+
+              return SliverPadding(
+                padding: const EdgeInsets.only(
+                  left: 16.0,
+                  right: 16.0,
+                  top: 16.0,
+                  bottom: 100.0,
+                ),
+                sliver: SliverGrid.builder(
+                  itemCount: _productList.length,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 16,
+                    mainAxisSpacing: 16,
+                    childAspectRatio: 0.7,
+                  ),
+                  itemBuilder: (context, index) {
+                    final product = _productList[index];
+                    return InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return const ProductDetailScreen();
+                            },
+                          ),
+                        );
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[200],
+                                  borderRadius: BorderRadius.circular(10),
+                                  image: DecorationImage(
+                                    image: NetworkImage(product.thumbnail),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            Text(
+                              product.brand,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 5),
+                            Text(
+                              product.price.toString(),
+                              style: TextStyle(
+                                color: Colors.yellow[700],
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     );
                   },
-                  child: Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.grey[200],
-                              borderRadius: BorderRadius.circular(10),
-                              image: const DecorationImage(
-                                image: NetworkImage(
-                                  'https://cdn.dummyjson.com/product-images/4/thumbnail.jpg',
-                                ),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        const Text(
-                          'Product Name',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 5),
-                        Text(
-                          'Rp 100.000',
-                          style: TextStyle(
-                            color: Colors.yellow[700],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
+                ),
+              );
+            },
           ),
         ],
       ),

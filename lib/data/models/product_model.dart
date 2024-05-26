@@ -10,29 +10,44 @@ class ProductModel extends ProductEntity {
 
   ProductModel.fromJson(Map<String, dynamic> json)
       : super(
-          id: json["id"],
-          title: json["title"],
-          description: json["description"],
-          category: json["category"],
-          price: json["price"]?.toDouble(),
-          discountPercentage: json["discountPercentage"]?.toDouble(),
-          rating: json["rating"]?.toDouble(),
-          stock: json["stock"],
-          tags: List<String>.from(json["tags"].map((x) => x)),
-          brand: json["brand"],
-          sku: json["sku"],
-          weight: json["weight"],
-          dimensions: DimensionsModel.fromJson(json["dimensions"]),
-          warrantyInformation: json["warrantyInformation"],
-          shippingInformation: json["shippingInformation"],
-          availabilityStatus: json["availabilityStatus"],
-          reviews: List<ReviewModel>.from(
-              json["reviews"].map((x) => ReviewModel.fromJson(x))),
-          returnPolicy: json["returnPolicy"],
-          minimumOrderQuantity: json["minimumOrderQuantity"],
-          meta: MetaModel.fromJson(json["meta"]),
-          thumbnail: json["thumbnail"],
-          images: List<String>.from(json["images"].map((x) => x)),
+          id: json["id"] ?? "",
+          title: json["title"] ?? "",
+          description: json["description"] ?? "",
+          category: json["category"] ?? "",
+          price: json["price"]?.toDouble() ?? 0.0,
+          discountPercentage: json["discountPercentage"]?.toDouble() ?? 0.0,
+          rating: json["rating"]?.toDouble() ?? 0.0,
+          stock: json["stock"] ?? 0,
+          tags: json["tags"] != null
+              ? List<String>.from(json["tags"].map((x) => x))
+              : [],
+          brand: json["brand"] ?? "",
+          sku: json["sku"] ?? "",
+          weight: json["weight"] ?? "",
+          dimensions: json["dimensions"] != null
+              ? DimensionsModel.fromJson(json["dimensions"]).toEntity()
+              : DimensionsEntity(width: 0.0, height: 0.0, depth: 0.0),
+          warrantyInformation: json["warrantyInformation"] ?? "",
+          shippingInformation: json["shippingInformation"] ?? "",
+          availabilityStatus: json["availabilityStatus"] ?? "",
+          reviews: json["reviews"] != null
+              ? List<ReviewModel>.from(
+                  json["reviews"].map((x) => ReviewModel.fromJson(x)))
+              : [],
+          returnPolicy: json["returnPolicy"] ?? "",
+          minimumOrderQuantity: json["minimumOrderQuantity"] ?? 0,
+          meta: json["meta"] != null
+              ? MetaModel.fromJson(json["meta"]).toEntity()
+              : MetaEntity(
+                  createdAt: DateTime(0),
+                  updatedAt: DateTime(0),
+                  barcode: "",
+                  qrCode: "",
+                ),
+          thumbnail: json["thumbnail"] ?? "",
+          images: json["images"] != null
+              ? List<String>.from(json["images"].map((x) => x))
+              : [],
         );
 
   Map<String, dynamic> toJson() {
@@ -124,9 +139,9 @@ class DimensionsModel extends DimensionsEntity {
 
   DimensionsModel.fromJson(Map<String, dynamic> json)
       : super(
-          width: json["width"]?.toDouble(),
-          height: json["height"]?.toDouble(),
-          depth: json["depth"]?.toDouble(),
+          width: json["width"]?.toDouble() ?? 0.0,
+          height: json["height"]?.toDouble() ?? 0.0,
+          depth: json["depth"]?.toDouble() ?? 0.0,
         );
 
   Map<String, dynamic> toJson() => {
@@ -157,10 +172,10 @@ class MetaModel extends MetaEntity {
 
   MetaModel.fromJson(Map<String, dynamic> json)
       : super(
-          createdAt: DateTime.parse(json["createdAt"]),
-          updatedAt: DateTime.parse(json["updatedAt"]),
-          barcode: json["barcode"],
-          qrCode: json["qrCode"],
+          createdAt: DateTime.parse(json["createdAt"] ?? ""),
+          updatedAt: DateTime.parse(json["updatedAt"] ?? ""),
+          barcode: json["barcode"] ?? "",
+          qrCode: json["qrCode"] ?? "",
         );
 
   Map<String, dynamic> toJson() => {
@@ -189,11 +204,11 @@ class MetaModel extends MetaEntity {
 class ReviewModel extends ReviewEntity {
   ReviewModel.fromJson(Map<String, dynamic> json)
       : super(
-          rating: json["rating"],
-          comment: json["comment"],
-          date: DateTime.parse(json["date"]),
-          reviewerName: json["reviewerName"],
-          reviewerEmail: json["reviewerEmail"],
+          rating: json["rating"] ?? 0.0,
+          comment: json["comment"] ?? "",
+          date: DateTime.parse(json["date"] ?? ""),
+          reviewerName: json["reviewerName"] ?? "",
+          reviewerEmail: json["reviewerEmail"] ?? "",
         );
 
   Map<String, dynamic> toJson() => {
