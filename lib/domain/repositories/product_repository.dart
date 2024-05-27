@@ -13,4 +13,5 @@ abstract class ProductRepository {
   Future<Result<ProductEntity>> searchProduct({
     required String query,
   });
+  Future<Result<List<String>>> getCategories();
 }

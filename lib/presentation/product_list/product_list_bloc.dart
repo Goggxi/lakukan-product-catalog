@@ -14,10 +14,11 @@ class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
   final ProductRepository _productRepository;
 
   ProductListBloc(this._productRepository) : super(ProductListInitial()) {
-    on<GetProductListEvent>(_postProductList);
+    on<GetProductListEvent>(_getProductList);
+    on<GetCategoryListEvent>(_getCategoryList);
   }
 
-  void _postProductList(
+  void _getProductList(
     GetProductListEvent event,
     Emitter<ProductListState> emit,
   ) async {
@@ -30,6 +31,19 @@ class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
       emit(ProductListSuccess(result));
     } else {
       emit(ProductListError(result.message, code: result.code));
+    }
+  }
+
+  void _getCategoryList(
+    GetCategoryListEvent event,
+    Emitter<ProductListState> emit,
+  ) async {
+    emit(CategoryListLoading());
+    final result = await _productRepository.getCategories();
+    if (result.status == Status.success) {
+      emit(CategoryListSuccess(result.data));
+    } else {
+      emit(CategoryListError(result.message, code: result.code));
     }
   }
 }

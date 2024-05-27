@@ -9,3 +9,5 @@ class GetProductListEvent extends ProductListEvent {
 
   GetProductListEvent({this.limit = 10, this.skip = 0});
 }
+
+class GetCategoryListEvent extends ProductListEvent {}

@@ -78,4 +78,35 @@ class ProductRepositoryImpl extends ProductRepository {
     // TODO: implement searchProduct
     throw UnimplementedError();
   }
+
+  @override
+  Future<Result<List<String>>> getCategories() async {
+    const path = '/products/category-list';
+
+    try {
+      _logger.t('GET $path');
+      final response = await _httpClient.apiRequest(
+        url: Constants.baseUrl,
+        apiPath: path,
+        method: RequestMethod.get,
+      );
+
+      if (response.statusCode == 200) {
+        final data = response.body;
+        final decode = jsonDecode(data);
+        final List<String> categories =
+            (decode as List).map((e) => e.toString()).toList();
+        _logger.d("Success : ${response.statusCode}");
+        return Result.success(categories);
+      }
+
+      _logger.e('GET $path Body:${response.body}');
+      return Result.error(
+        code: response.statusCode,
+      );
+    } catch (e) {
+      _logger.e(e.toString());
+      return Result.error(message: e.toString());
+    }
+  }
 }
